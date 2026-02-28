@@ -14,6 +14,14 @@ NetConfig AI bridges Generative AI (Google Gemini) with traditional Network Auto
 
 
 
+<video src="demo022.mp4" controls="controls" muted="muted" style="max-width: 100%;"></video>
+
+https://github.com/user-attachments/assets/08e365dd-1d45-401c-bfa0-6db6fdb1f5c1
+
+
+
+https://github.com/user-attachments/assets/08e365dd-1d45-401c-bfa0-6db6fdb1f5c1
+
 
 
 
