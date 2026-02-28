@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Vendor NetConfig AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-screen font-sans">
+
+    <div class="container mx-auto max-w-4xl p-6">
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-8 border-b border-slate-700 pb-6">
+            <div class="bg-indigo-600 p-3 rounded-lg">
+                <i class="fa-solid fa-server text-2xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Multi-Vendor NetConfig AI</h1>
+                <p class="text-slate-400">Universal Network Configuration Generator & Deployer</p>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700">
+            
+            <!-- Row 1: Vendor & Mode -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Network Vendor / OS</label>
+                    <div class="relative">
+                        <select id="vendor" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <optgroup label="Cisco Systems">
+                                <option value="Cisco IOS-XE">Cisco IOS/IOS-XE</option>
+                                <option value="Cisco NX-OS">Cisco NX-OS (Nexus)</option>
+                            </optgroup>
+                            <optgroup label="Fortinet">
+                                <option value="Fortinet FortiOS" selected>Fortinet (FortiOS)</option>
+                            </optgroup>
+                            <optgroup label="Others">
+                                <option value="Juniper Junos">Juniper Junos</option>
+                                <option value="Arista EOS">Arista EOS</option>
+                                <option value="Palo Alto PAN-OS">Palo Alto PAN-OS</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Output Format</label>
+                    <div class="relative">
+                        <select id="mode" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="Ad-hoc">Ad-hoc Commands</option>
+                            <option value="Full Config">Full Configuration</option>
+                            <option value="Ansible">Ansible Playbook</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Target Device Credentials (Now Visible Upfront) -->
+            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 mb-6">
+                <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3">Target Device Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">IP Address</label>
+                        <input type="text" id="deployHost" value="192.168.122.50" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Username</label>
+                        <input type="text" id="deployUser" value="admin" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Password</label>
+                        <input type="password" id="deployPass" value="admin" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Input Area -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Describe your requirement</label>
+                <textarea id="userInput" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-4 text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Configure port1 with IP 172.17.0.100/24 allowing ping and ssh..."></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <button onclick="generateConfig()" id="genBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-lg shadow-lg transition transform active:scale-[0.99] flex justify-center items-center gap-2">
+                <span id="btnText">Generate Configuration</span>
+                <i id="btnIcon" class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+        </div>
+
+        <!-- Output Section (Hidden initially) -->
+        <div id="outputSection" class="mt-8 hidden">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-bold text-white">Generated Configuration</h2>
+                <div class="flex gap-2">
+                    <button onclick="copyToClipboard()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded">Copy</button>
+                    <button onclick="downloadFile()" class="text-xs bg-green-700 hover:bg-green-600 px-3 py-1 rounded">Download</button>
+                </div>
+            </div>
+            
+            <textarea id="codeOutput" class="w-full bg-black/50 p-4 rounded-lg font-mono text-sm text-green-400 border border-slate-700 min-h-[150px] mb-6 focus:outline-none focus:border-indigo-500 transition"></textarea>
+
+            <!-- Deployment Button -->
+            <div class="bg-slate-800 rounded-xl p-6 border border-indigo-500/30">
+                <button onclick="deployConfig()" id="deployBtn" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center gap-2">
+                    <span id="deployBtnText">Push to Device</span>
+                    <i class="fa-solid fa-terminal"></i>
+                </button>
+
+                <div id="deployLogPanel" class="mt-4 hidden">
+                    <label class="block text-xs text-slate-400 mb-1">Deployment Log</label>
+                    <pre id="deployLog" class="bg-black p-3 rounded text-xs font-mono text-gray-300 overflow-x-auto whitespace-pre-wrap"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const FLOWISE_ID = "95113d6d-7bc2-4063-a842-7efa403c067f"; 
+        const API_URL = `http://localhost:3000/api/v1/prediction/${FLOWISE_ID}`;
+        const DEPLOY_URL = "http://localhost:8000/deploy"; 
+
+        async function generateConfig() {
+            const vendor = document.getElementById('vendor').value;
+            const mode = document.getElementById('mode').value;
+            const input = document.getElementById('userInput').value;
+            const btn = document.getElementById('genBtn');
+            const codeOutput = document.getElementById('codeOutput');
+            const outputSection = document.getElementById('outputSection');
+
+            if (!input) return alert("Please enter a requirement.");
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Generating...`;
+
+            try {
+                const prompt = `[VENDOR: ${vendor}] [MODE: ${mode}] Request: ${input}`;
+                
+                const payload = {
+                    question: prompt,
+                    text: prompt,
+                    input: prompt
+                };
+
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                outputSection.classList.remove('hidden');
+                
+                let cleanText = data.text || "No output.";
+                cleanText = cleanText.replace(/^```[a-z-]*\n/i, '').replace(/```$/g, '');
+                codeOutput.value = cleanText.trim();
+                
+                // Auto-scroll to output
+                outputSection.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (e) {
+                alert("Error connecting to Flowise: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span id="btnText">Generate Configuration</span><i id="btnIcon" class="fa-solid fa-wand-magic-sparkles"></i>`;
+            }
+        }
+
+        async function deployConfig() {
+            const vendor = document.getElementById('vendor').value;
+            const config = document.getElementById('codeOutput').value;
+            const host = document.getElementById('deployHost').value;
+            const user = document.getElementById('deployUser').value;
+            const pass = document.getElementById('deployPass').value;
+            const btn = document.getElementById('deployBtn');
+            const logPanel = document.getElementById('deployLogPanel');
+            const logOutput = document.getElementById('deployLog');
+
+            if (!config) return alert("No configuration to deploy.");
+            if (!host || !user) return alert("Please check Device details.");
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Connecting to ${host}...`;
+            logPanel.classList.remove('hidden');
+            logOutput.textContent = "Initiating connection...";
+            logOutput.className = "bg-black p-3 rounded text-xs font-mono text-yellow-400 overflow-x-auto whitespace-pre-wrap";
+
+            try {
+                const res = await fetch(DEPLOY_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        vendor: vendor,
+                        config: config,
+                        host: host,
+                        username: user,
+                        password: pass
+                    })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    logOutput.textContent = "SUCCESS:\n" + data.log;
+                    logOutput.className = "bg-black p-3 rounded text-xs font-mono text-green-400 overflow-x-auto whitespace-pre-wrap";
+                    alert("Configuration pushed successfully!");
+                } else {
+                    logOutput.textContent = "FAILED:\n" + data.error;
+                    logOutput.className = "bg-black p-3 rounded text-xs font-mono text-red-400 overflow-x-auto whitespace-pre-wrap";
+                }
+
+            } catch (e) {
+                logOutput.textContent = "SYSTEM ERROR: " + e.message;
+                logOutput.className = "bg-black p-3 rounded text-xs font-mono text-red-400 overflow-x-auto whitespace-pre-wrap";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span id="deployBtnText">Push to Device</span><i class="fa-solid fa-terminal"></i>`;
+            }
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(document.getElementById('codeOutput').value);
+            alert("Copied!");
+        }
+        function downloadFile() {
+            const text = document.getElementById('codeOutput').value;
+            const blob = new Blob([text], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `config_${new Date().getTime()}.cfg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
