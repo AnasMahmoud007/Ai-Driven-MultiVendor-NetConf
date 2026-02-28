@@ -22,8 +22,9 @@ NetConfig AI bridges Generative AI (Google Gemini) with traditional Network Auto
 
 ### **Step 1: Clone the Repository**
 
-git clone \[https://github.com/YOUR\_GITHUB\_USERNAME/NetConfig-AI.git\](https://github.com/YOUR\_GITHUB\_USERNAME/NetConfig-AI.git)  
-cd NetConfig-AI
+git clone https://github.com/AnasMahmoud007/Ai-Driven-MultiVendor-NetConf.git
+
+cd Ai-Driven-MultiVendor-NetConf
 
 ### **Step 2: Start the AI Brain (Docker)**
 
