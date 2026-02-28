@@ -1,4 +1,4 @@
-# **🚀 Multi-Vendor AI-Driven NetConfig**
+# **🚀 AI-Driven Multi-Vendor NetConfig**
 
 **Universal Network Configuration & Deployment Assistant**
 
