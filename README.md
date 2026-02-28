@@ -12,7 +12,7 @@ NetConfig AI bridges Generative AI (Google Gemini) with traditional Network Auto
 * **Direct SSH Deployment:** Push generated configs straight to your network devices (GNS3, EVE-NG, or Production).  
 * **Fully Local & Secure:** The UI and deployment bridge run entirely on your local machine.
 
-<video src="demo.mp4" controls="controls" muted="muted" style="max-width: 100%;"></video>
+<video src="AI_Powered_Network_Automation_Demo.mp4" controls="controls" muted="muted" style="max-width: 100%;"></video>
 
 ## **🚀 Quick Start Guide**
 
